@@ -1,1 +1,5 @@
+File to track contents of Original-Audio-Samples.
 
+This file will contain brief description of each .wav file to act as an input.
+
+Files: 
