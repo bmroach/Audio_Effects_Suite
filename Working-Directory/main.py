@@ -18,6 +18,9 @@ import math
 #Start main.py
 
 
-
-
-#adam
+# Global parameters
+dirIn = "/../Original-Audio-Samples/"
+dirOut = "/../Output-Audio-Samples/"
+numChannels = 1                      # mono
+sampleWidth = 2                      # in bytes, a 16-bit short
+sampleRate = 44100
