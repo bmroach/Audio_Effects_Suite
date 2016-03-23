@@ -30,7 +30,8 @@ sampleRate = 44100
 #Reference Functions
 
 def writeWaveFile(fname, X):
-    """3/22/16: untested, from ref files, should work"""
+    """3/22/16: untested, from ref files, should work"""    
+    fname += " w/Reverb"    
     params = [numChannels,sampleWidth, sampleRate , len(X), "NONE", None]
     data = array.array("h",X)
     with contextlib.closing(wave.open(dirOut + fname, "w")) as f:
@@ -67,15 +68,16 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
     """
         
     """ Version History
-        3/22/16: Prototype framework - current
+        3/22/16: Prototype framework in progress (current) [BMR]
     """
     
     
         
     data = readWaveFile(fileName)
     
-    #pad zeros to add room for reverb after initial termination point
-    data += [0 for x in (Decay*44100 + preDelay *44100)]
+    #pad zeros to add room for reverb after initial termination point 
+    for x in range(Decay*44100 + preDelay *44100):
+        data.append(0)
     
     position = 0
     
@@ -83,33 +85,34 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
     
     #for every 1 second window
     for i in range(seconds):
-        currentWindow = data[position:position+44100] #width of 1 second
         
-        #initial decay
+        #capture current window and apply initial decay        
+        currentWindow = data[position:position+44100] #width of 1 second, "cloned sample"
         for x in range(len(currentWindow)):
-            currentWindow[x] *= .5 #half the amplitude         
+            currentWindow[x] = math.floor(currentWindow[x] * .5) #half the amplitude         
+        
         
         #length of decay determines reach of cloned signal
+        forwardPosition = copy.deepcopy(position) #marks starting sample
+        forwardPosition += (preDelay * 44100) #account for delay before reverb starts
         for k in range(Decay):
-            forwardPosition = copy.deepcopy(position) #marks starting sample
-            forwardPosition += (preDelay * 44100) #account for delay before reverb starts
-            
+                        
             #add each clone sample to samples forward in time
             for j in range(44100):
-                output[forwardPosition + j] = data[] + currentWindow[j]                
+                data[forwardPosition + j] += currentWindow[j]                
                 
-                #signal addition
-
             #decrease amplitude of currentWindow (reverb decaying over time)
             for x in range(len(currentWindow)):
-                currentWindow[x] *= .5                
-                
+                currentWindow[x] = math.floor(-1* math.log(k+1/Decay))                
+
+            forwardPosition += 44100
         
         #mark where next 1sec window will start
         position += 44100 
     
         
-        
+    #finally, write out to .wav file
+    writeWaveFile(fileName, data)
    
 
 
