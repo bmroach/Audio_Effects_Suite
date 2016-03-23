@@ -7,7 +7,7 @@ Owners/Developers: Brian M. Roach & Adam Eisenstein
 Emails: bmroach@bu.edu & eisea@bu.edu  
   
   
-Intended Use: CS591 (Computational Audio) Final Project  
+Intended Use: CS591 (Computational Audio) Final Project Satisfaction and Research   
   
 Purpose: Overlay simulated, parameter differentiable reverberation on .wav audio files using Python, and export to a .wav files.   
   
