@@ -8,6 +8,7 @@ Emails: bmroach@bu.edu & eisea@bu.edu
   
   
 Intended Use: CS591 (Computational Audio) Final Project  
+  
 Purpose: Overlay simulated, parameter differentiable reverberation on .wav audio files using Python, and export to a .wav files.   
   
 Functions referenced from Wayne Snyder's (waysnyder@gmail.com) Teaching Code Directory    
