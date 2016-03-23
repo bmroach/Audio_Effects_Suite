@@ -55,9 +55,19 @@ def readWaveFile(fileName,withParams=False,asNumpy=False):
         
 #______________________________________________________________________________
         
-def main():
+def main(fileName, preDelay, Decay, Variation, presetOn = False, preset = ""):
     """3/22/16: Prototype framework"""
         
         
         
-        
+   
+
+
+
+
+
+
+
+
+
+     

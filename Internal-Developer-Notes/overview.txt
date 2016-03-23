@@ -1,1 +1,10 @@
+Notes
+differentiable parameters to include:
+-Pre-Delay
+-Decay
+-Variation
 
+Potential Presets:
+-Small Hall
+-Large Hall
+-Arena
