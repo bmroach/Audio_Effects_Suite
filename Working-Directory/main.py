@@ -34,7 +34,7 @@ def writeWaveFile(fname, X):
     fname += " w/Reverb"    
     params = [numChannels,sampleWidth, sampleRate , len(X), "NONE", None]
     data = array.array("h",X)
-    with contextlib.closing(wave.open(dirOut + fname, "w")) as f:
+    with contextlib.closing(wave.open(dirOut + fname, 'w')) as f:
         f.setparams(params)
         f.writeframes(data.tobytes())
     print(fname + " written.")
@@ -86,10 +86,10 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
     #for every 1 second window
     for i in range(seconds):
         
-        #capture current window and apply initial decay        
+        #capture current window ##and apply initial decay        
         currentWindow = data[position:position+44100] #width of 1 second, "cloned sample"
-        for x in range(len(currentWindow)):
-            currentWindow[x] = math.floor(currentWindow[x] * .5) #half the amplitude         
+#        for x in range(len(currentWindow)):
+#            currentWindow[x] = math.floor(currentWindow[x] * .5) #half the amplitude         
         
         
         #length of decay determines reach of cloned signal
