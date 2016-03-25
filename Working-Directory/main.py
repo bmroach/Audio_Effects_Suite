@@ -95,7 +95,7 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
         
         #length of decay determines reach of cloned signal
         forwardPosition = copy.deepcopy(position) #marks starting sample
-        forwardPosition += (preDelay * 44100) #account for delay before reverb starts
+        forwardPosition += (44100 + (preDelay * 44100) ) #account for delay before reverb starts
         for k in range(Decay):
                         
             #add each clone sample to samples forward in time
@@ -104,7 +104,7 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
                 
             #decrease amplitude of currentWindow (reverb decaying over time)
             for x in range(len(currentWindow)):
-                currentWindow[x] = math.floor(-1* math.log(k+1/Decay))                
+                currentWindow[x] *= math.floor(-1* math.log(k+1/Decay)) #check               
 
             forwardPosition += 44100
         
