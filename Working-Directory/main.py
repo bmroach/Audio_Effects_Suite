@@ -17,7 +17,7 @@ import copy
 
 #______________________________________________________________________________
 #Start main.py
-#adamrox
+
 
 #
 # Global parameters
@@ -96,6 +96,13 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
         #length of decay determines reach of cloned signal
         forwardPosition = copy.deepcopy(position) #marks starting sample
         forwardPosition += (44100 + (preDelay * 44100) ) #account for delay before reverb starts
+        
+        #_________
+        #test code
+        print(len(data)//44100)
+        return 
+        #_________        
+        
         for k in range(Decay):
                         
             #add each clone sample to samples forward in time
