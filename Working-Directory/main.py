@@ -31,7 +31,7 @@ sampleRate = 44100
 
 def writeWaveFile(fname, X):
     """3/22/16: untested, from ref files, should work"""    
-    fname += " w/Reverb"    
+#    fname += " w/Reverb"    
     params = [numChannels,sampleWidth, sampleRate , len(X), "NONE", None]
     data = array.array("h",X)
     with contextlib.closing(wave.open(dirOut + fname, 'w')) as f:
