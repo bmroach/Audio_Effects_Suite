@@ -104,10 +104,10 @@ def reverb(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, p
                 currentWindow[x] = math.floor(currentWindow[x] * math.e**(-1*(k/Decay)))                  
          
             #add each clone sample to samples forward in time           
-            for j in range(sampleRate):
-                data[forwardPosition + j] += currentWindow[j]
-#                 if (forwardPosition + j) < len(data):                #testing without these two lines
-#                     data[forwardPosition + j] += currentWindow[j]
+        for j in range(sampleRate):
+            data[forwardPosition + j] += currentWindow[j]
+#            if (forwardPosition + j) < len(data):        #testing without these two lines
+#               data[forwardPosition + j] += currentWindow[j]
 
             forwardPosition += windowWidth
         
