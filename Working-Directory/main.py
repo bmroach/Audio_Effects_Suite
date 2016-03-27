@@ -88,11 +88,10 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
     
     #for every 1 second window
     for i in range(seconds):
-        
         #capture current window ##and apply initial decay        
         currentWindow = data[position:position+sampleRate] #width of 1 second, "cloned sample"
         for x in range(len(currentWindow)):
-            currentWindow[x] = math.floor(currentWindow[x] * math.log(-1*lamb*(1/Decay)) #begin decay #CHECK        
+            currentWindow[x] = math.floor(currentWindow[x] * math.e**(-1*(1/Decay))) #begin decay #CHECK        
         
         
         #length of decay determines reach of cloned signal
@@ -106,17 +105,17 @@ def main(fileName, preDelay = 0, Decay = 0, Variation = 0, presetOn = False, pre
 #        #_________        
         
         for k in range(Decay):
-                        
             #add each clone sample to samples forward in time           
             for j in range(sampleRate):
-                data[forwardPosition + j] += currentWindow[j]
+                if (forwardPosition + j) < len(data):
+                    data[forwardPosition + j] += currentWindow[j]
 #                print(currentWindow[j])
                                 
                 
             #decrease amplitude of currentWindow (reverb decaying over time)
             for x in range(len(currentWindow)):
-                currentWindow[x] = math.floor(currentWindow[x] * math.log(-1*lamb*(k+1/Decay)) #check               
-
+                currentWindow[x] = math.floor(currentWindow[x] * math.e**(-1*(1/Decay))) #check               
+            
             forwardPosition += sampleRate
         
         #mark where next 1sec window will start
