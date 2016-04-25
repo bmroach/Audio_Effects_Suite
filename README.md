@@ -11,6 +11,13 @@ Intended Use: CS591 (Computational Audio) Final Project Satisfaction and Researc
   
 Purpose: develop a library of audio effects on input .WAV files, implemented using python and a variety of external libraries.
   
+Suite Contents: 
+Reverb simulator
+Distortion simulator
+Phaser simulator
+Flange simulator
+
+  
   
 Functions referenced from Wayne Snyder's (waysnyder@gmail.com) Teaching Code Directory    
   
