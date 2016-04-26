@@ -1,5 +1,5 @@
 """
-Filename: main.py
+Filename: mainReverb.py
 
 See README.md
 
@@ -16,7 +16,7 @@ import math
 import copy 
 
 #______________________________________________________________________________
-#Start main.py
+#Start mainReverb.py
 
 # Global parameters
 dirIn = "../Original-Audio-Samples/"
