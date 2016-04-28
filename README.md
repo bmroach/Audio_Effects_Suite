@@ -13,6 +13,7 @@ Purpose: develop a library of audio effects on input .WAV files, implemented usi
   
 Suite Contents: 
 Reverb simulator
+Convolution Reverb simulator
 Distortion simulator
 Phaser simulator
 Flange simulator
