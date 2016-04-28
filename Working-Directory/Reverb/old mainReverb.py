@@ -15,15 +15,14 @@ import numpy as np
 import math
 import copy 
 
-sys.path.append('../Utilities')
 import utilities as ut
 
 #______________________________________________________________________________
 #Start mainReverb.py
 
 # Global parameters
-dirIn = "../../Original-Audio-Samples/"
-dirOut = "../../Output-Audio-Samples/Reverb/"
+dirIn = "../Original-Audio-Samples/"
+dirOut = "../Output-Audio-Samples/"
 
 numChannels = 1                      # mono
 sampleWidth = 2                      # in bytes, a 16-bit short

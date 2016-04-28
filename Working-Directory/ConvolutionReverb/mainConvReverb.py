@@ -1,5 +1,5 @@
 """
-Filename: mainDistortion.py
+Filename: mainConvReverb.py
 
 See README.md
 
@@ -21,11 +21,11 @@ import utilities as ut
 
 
 #______________________________________________________________________________
-#Start mainDistortion.py
+#Start mainConvReverb.py
 
 # Global parameters
 dirIn = "../../Original-Audio-Samples/"
-dirOut = "../../Output-Audio-Samples/Distortion/"
+dirOut = "../../Output-Audio-Samples/ConvolutionReverb/"
 
 numChannels = 1                      # mono
 sampleWidth = 2                      # in bytes, a 16-bit short
@@ -34,9 +34,3 @@ mulFactor = sampleRate * 10
 
 
 #______________________________________________________________________________
-
-
-
-
-
-        

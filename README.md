@@ -18,7 +18,6 @@ Phaser simulator
 Flange simulator
 
   
-  
 Functions referenced from Wayne Snyder's (waysnyder@gmail.com) Teaching Code Directory    
   
 Developed under the Apache License 2.0  
