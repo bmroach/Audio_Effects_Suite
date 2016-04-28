@@ -1,5 +1,0 @@
-File to track contents of Output-Audio-Samples.
-
-This file will contain brief description of each .wav file that was generated, the parameters that were used to generate each .wav file, and any pertinent comments.
-
-Files:  
