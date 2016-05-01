@@ -20,8 +20,8 @@ import copy
 numChannels = 1                      # mono
 sampleWidth = 2                      # in bytes, a 16-bit short
 sampleRate = 44100
-mulFactor = sampleRate * 10
-
+maxAmp = (2**(8*sampleWidth - 1) - 1)    #maximum amplitude is 2**15 - 1  = 32767
+minAmp = -(2**(8*sampleWidth - 1))       #min amp is -2**15
 
 #Reference Functions
 
@@ -49,3 +49,17 @@ def readWaveFile(fileName,withParams=False,asNumpy=False):
         return X,params
     else:
         return X 
+
+
+
+def signalAvg(signal):             
+    return sum(signal)/len(signal)
+
+
+def signalCapPercent(signal):
+    val = 0
+    for i range(len(signal)):
+        if signal[i] >= maxAmp or signal[i] <= minAmp:
+            val += 1     
+    return val/len(signal)
+    
