@@ -199,7 +199,7 @@ def distortion(signal, clipThreshold = .3, attack = .9, trim=True):
       
        
        
-def demoDistortion():
+def distortionDemo():
     
 #     obama     = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
 #     obamaDist = distortion(obama)    
@@ -216,7 +216,7 @@ def demoDistortion():
     print("Distortion Demo Complete.")
 
 
-demoDistortion()
+distortionDemo()
 
 
 
