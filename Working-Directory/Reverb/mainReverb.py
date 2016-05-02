@@ -42,36 +42,34 @@ def reverb(signal, preDelay = 0, Decay = 0, trim = True):
     """    
     signal = [int(x) for x in signal]
     
-    pdSamlpes = preDelay * sampleRate
+    pdSamples = preDelay * sampleRate
     dSamples = Decay * sampleRate
     
     if trim: #trim to 10 seconds
         signal = signal[:441000]
+
+    signal += [0 for x in range(pdSamples + dSamples)]
     
     length = len(signal)
     avg = ut.signalAvg(signal)
     
-    
-    
-    
-    
-    
-    
-    
-    
-        
-    
-
-
-
-
-    while ut.signalAvg(signal) > avg*1.1:
+    for i in range(length):
+        currentSample = signal[i]
+        for x in range(dSamples):
+            index = x + pdSamples #account for predelay
+            
+            signal[index] += (currentSample * (math.e**(-1*(x/dSamples))))
+            
+            
+    while ut.signalAvg(signal) > avg*1.2:
         for i in range(length):
             signal[i] *= .95
     
     signal = [int(x) for x in signal]
     
     return signal 
+
+
 
 
 def reverbDemo():
@@ -85,9 +83,9 @@ def reverbDemo():
 #     jfkReverb  = reverb(jfk)
 #     ut.writeWaveFile(dirOut + "JFK_Distortion.wav", jfkDist)
 
-#     piano       = ut.readWaveFile(dirIn+"piano.wav")
-#     pianoReverb = reverb(jfk)
-#     ut.writeWaveFile(dirOut + "Piano_Reverb.wav", pianoReverb)
+    piano       = ut.readWaveFile(dirIn+"piano.wav")
+    pianoReverb = reverb(piano)
+    ut.writeWaveFile(dirOut + "Piano_Reverb.wav", pianoReverb)
     
     print("Reverb Demo Complete.")
 
