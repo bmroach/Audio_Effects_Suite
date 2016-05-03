@@ -35,7 +35,7 @@ sampleRate = 44100
         
 #______________________________________________________________________________
         
-def reverb(signal, preDelay = 0, Decay = 0, trim = True):
+def reverb(signal, preDelay = 0, Decay = 1, trim = True):
     """fileName: name of file in string form
         preDelay: delay befor reverb begins (seconds)
         Decay: hang time of signal (seconds)        
