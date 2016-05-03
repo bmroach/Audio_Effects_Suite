@@ -52,8 +52,26 @@ def readWaveFile(fileName,withParams=False,asNumpy=False):
 
 
 
-def signalAvg(signal):             
-    return sum(signal)/len(signal)
+def signalAvg(signal):
+    
+    pos = 0
+    posCount = 0 
+    neg = 0
+    negCount = 0 
+        
+    for i in range(len(signal)):
+        if signal[i] >= 0:
+            pos += signal[i]
+            posCount+= 1
+            
+        else:
+            neg += signal[i]
+            negCount += 1
+
+    pos /= posCount
+    neg /= negCount        
+                         
+    return [pos, neg]
 
 
 def signalCapPercent(signal):
