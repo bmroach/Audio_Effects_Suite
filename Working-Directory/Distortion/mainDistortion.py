@@ -37,15 +37,22 @@ minAmp = -(2**(8*sampleWidth - 1))       #min amp is -2**15
 #______________________________________________________________________________
 
 
-def distortion(signal, clipThreshold = .3, attack = .9):
+def distortion(signal, clipThreshold = .3, attack = .9, trim=True):
+    
+    if trim: #trim to 10 seconds
+        signal = signal[:441000]
  
+    #convert to ints
+    signal = [int(x) for x in signal]
+    
+    
     length = len(signal)
-    increment = 1.1
+    increment = 1.01
     
     #increase gain to induce clipping
     while ut.signalCapPercent(signal) < clipThreshold:
         for i in range(length):
-            signal[i] *= increment
+            signal[i] = math.floor(signal[i] * increment)
     
     avg = ut.signalAvg(signal)
     overClippingPairs = [] 
@@ -56,14 +63,20 @@ def distortion(signal, clipThreshold = .3, attack = .9):
         if signal[i] > maxAmp:
             k = i
             while signal[k] > maxAmp:
-                k += 1            
+                k += 1
+                if k == length:
+                    break
+                            
             if k != i:
                 overClippingPairs += [[i,k]]
             
         elif signal[i] < minAmp:
             j = i
-            while signal[k] > maxAmp:
-                j += 1            
+            while signal[j] < minAmp:
+                j += 1
+                if j == length:
+                    break
+                            
             if j != i:
                 underClippingPairs += [[i,j]]
     
@@ -82,15 +95,39 @@ def distortion(signal, clipThreshold = .3, attack = .9):
         firstHalf = range(start, middle[0])
         firstHalf = firstHalf[::-1]
         
-        secondHalf = range(middle[1],end+1)
-            
+        
+        if len(middle) == 1:                        
+            if end+1<length:
+                secondHalf = range(middle[0],end+1)        
+            else:
+                secondHalf = range(middle[0],length)
+        
+        elif len(middle) == 2:                        
+            if end+1<length:
+                secondHalf = range(middle[1],end+1)        
+            else:
+                secondHalf = range(middle[1],length)
+        
+                    
         for i in firstHalf:
             if signal[i] > avg:
-                signal[i] = signal[i+1] * attack                        
+                z = 1
+                while signal[i] >= maxAmp or signal[i] <= minAmp:
+                    if z == 1:
+                        signal[i] = signal[i+1] * attack
+                        z += 1
+                    else:
+                        signal[i] *= attack
             
         for i in secondHalf:
             if signal[i] > avg:
-                signal[i] = signal[i-1] * attack
+                z = 1
+                while signal[i] >= maxAmp or signal[i] <= minAmp:
+                    if z == 1:
+                        signal[i] = signal[i-1] * attack
+                        z += 1
+                    else:
+                        signal[i] *= attack
     
     
     for pair in underClippingPairs:
@@ -108,37 +145,78 @@ def distortion(signal, clipThreshold = .3, attack = .9):
         firstHalf = range(start, middle[0])
         firstHalf = firstHalf[::-1]
         
-        secondHalf = range(middle[1],end+1)
+        
+        if len(middle) == 1:                        
+            if end+1<length:
+                secondHalf = range(middle[0],end+1)        
+            else:
+                secondHalf = range(middle[0],length)
+        
+        elif len(middle) == 2:                        
+            if end+1<length:
+                secondHalf = range(middle[1],end+1)        
+            else:
+                secondHalf = range(middle[1],length)
+                
             
         for i in firstHalf:
             if signal[i] > avg:
-                signal[i] = signal[i+1] * attack                        
-            
+                z = 1
+                while signal[i] >= maxAmp or signal[i] <= minAmp:
+                    if z == 1:
+                        signal[i] = signal[i+1] * attack
+                        z += 1
+                    else:                        
+                        signal[i] *= attack
         for i in secondHalf:
             if signal[i] > avg:
-                signal[i] = signal[i-1] * attack        
+                z = 1
+                while signal[i] >= maxAmp or signal[i] <= minAmp:
+                    if z == 1:
+                        signal[i] = signal[i-1] * attack
+                        z += 1
+                    else: 
+                        signal[i] *= attack        
         
-  
-      
-      
-      return signal  
-      
-      
-      
-      
-      
-      
-       
-       
-def demo():
+    #convert back to ints
+    signal = [int(x) for x in signal]
     
-    return 0
+    #ensure values are within short int range
+    for i in range(length):
+        if signal[i] > maxAmp:
+            signal[i] = maxAmp-1
+        
+        elif signal[i] < minAmp:
+            signal[i] = minAmp+1       
+    
+            
+    return signal  
+      
+      
+      
+      
+      
+      
+       
+       
+def distortionDemo():
+    
+#     obama     = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
+#     obamaDist = distortion(obama)    
+#     ut.writeWaveFile(dirOut + "Obama_Distortion.wav", obamaDist)
+    
+    jfk     = ut.readWaveFile(dirIn + "jfk.wav")
+    jfkDist = distortion(jfk)
+    ut.writeWaveFile(dirOut + "JFK_Distortion.wav", jfkDist)
+
+#     piano     = ut.readWaveFile(dirIn+"piano.wav")
+#     pianoDist = distortion(piano)    
+#     ut.writeWaveFile(dirOut + "Piano_Distortion.wav", pianoDist)
+    
+    print("Distortion Demo Complete.")
 
 
-
-
-
-
+distortionDemo()
 
 
 

@@ -58,7 +58,7 @@ def signalAvg(signal):
 
 def signalCapPercent(signal):
     val = 0
-    for i range(len(signal)):
+    for i in range(len(signal)):
         if signal[i] >= maxAmp or signal[i] <= minAmp:
             val += 1     
     return val/len(signal)
