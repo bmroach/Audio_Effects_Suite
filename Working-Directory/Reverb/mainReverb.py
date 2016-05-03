@@ -55,8 +55,8 @@ def reverb(signal, preDelay = 0, Decay = 1, trim = True):
     
     for i in range(length):
         currentSample = signal[i]
-        for x in range(dSamples):
-            index = x + pdSamples #account for predelay
+        for x in range(dSamples): 
+            index = i + x + pdSamples #account for predelay
             
             signal[index] += (currentSample * (math.e**(-1*(x/dSamples))))
             
