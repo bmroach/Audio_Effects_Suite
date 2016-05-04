@@ -37,7 +37,7 @@ sampleRate = 44100
         
 def reverb(signal, preDelay = 0, Decay = 1, trim = True):
     """fileName: name of file in string form
-        preDelay: delay befor reverb begins (seconds)
+        preDelay: delay before reverb begins (seconds)
         Decay: hang time of signal (seconds)        
     """    
     signal = [int(x) for x in signal]
@@ -47,7 +47,8 @@ def reverb(signal, preDelay = 0, Decay = 1, trim = True):
     
     if trim: #trim to 10 seconds
         signal = signal[:441000]
-
+        
+    #pad for reverb extension 
     signal += [0 for x in range(pdSamples + dSamples)]
     
     length = len(signal)
