@@ -53,25 +53,28 @@ def readWaveFile(fileName,withParams=False,asNumpy=False):
 
 
 def signalAvg(signal):
-    
-    pos = 0
+    """returns a double containing the avg of positive values and the avg of negative values"""
+    posAvg = 0
     posCount = 0 
-    neg = 0
+    negAvg = 0
     negCount = 0 
         
     for i in range(len(signal)):
         if signal[i] >= 0:
-            pos += signal[i]
+            posAvg += signal[i]
             posCount+= 1
             
         else:
-            neg += signal[i]
+            negAvg += signal[i]
             negCount += 1
 
-    pos /= posCount
-    neg /= negCount        
+    if posCount > 0:
+        posAvg /= posCount
+    
+    if negCount > 0:    
+        negAvg /= negCount        
                          
-    return [pos, neg]
+    return [posAvg, negAvg]
 
 
 def signalCapPercent(signal):
