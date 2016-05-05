@@ -37,7 +37,7 @@ sampleRate = 44100
         
 def reverb(signal, preDelay = 0, Decay = 1, trim = True):
     """fileName: name of file in string form
-        preDelay: delay befor reverb begins (seconds)
+        preDelay: delay before reverb begins (seconds)
         Decay: hang time of signal (seconds)        
     """    
     signal = [int(x) for x in signal]
@@ -45,27 +45,32 @@ def reverb(signal, preDelay = 0, Decay = 1, trim = True):
     pdSamples = preDelay * sampleRate
     dSamples = Decay * sampleRate
     
-    if trim: #trim to 10 seconds
+    if trim: #trim to 10 seconds        
         signal = signal[:441000]
-
+        
+    preLength = len(signal)
+        
+    #pad for reverb extension 
     signal += [0 for x in range(pdSamples + dSamples)]
     
     length = len(signal)
     avg = ut.signalAvg(signal)[0]
     
-    for i in range(length):
+    logArray = [(math.e**(-1*(x/dSamples))) for x in range(dSamples)]
+    
+    for i in range(preLength):
         currentSample = signal[i]
         for x in range(dSamples): 
             index = i + x + pdSamples #account for predelay
             
-            signal[index] += (currentSample * (math.e**(-1*(x/dSamples))))
-            
+            signal[index] = signal[index] + (currentSample * logArray[x])
+             
     goalAmp = avg * 1.2        
     while ut.signalAvg(signal)[0] > goalAmp:
         signal = [x*.90 for x in signal]
-    
+     
     signal = [int(x) for x in signal]
-    
+     
     return signal 
 
 
