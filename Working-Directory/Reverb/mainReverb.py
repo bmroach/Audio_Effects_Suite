@@ -45,8 +45,9 @@ def reverb(signal, preDelay = 0, Decay = 1, trim = True):
     pdSamples = preDelay * sampleRate
     dSamples = Decay * sampleRate
     
-    if trim: #trim to 10 seconds        
-        signal = signal[:441000]
+    if trim: #trim to 10 seconds  
+        signal = signal[:4410]
+#         signal = signal[:441000]
         
     preLength = len(signal)
         
