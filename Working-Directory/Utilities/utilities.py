@@ -12,7 +12,8 @@ import wave
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-import copy 
+import copy
+
 
 
 # Global parameters
@@ -83,4 +84,7 @@ def signalCapPercent(signal):
         if signal[i] >= maxAmp or signal[i] <= minAmp:
             val += 1     
     return val/len(signal)
+
+
+        
     

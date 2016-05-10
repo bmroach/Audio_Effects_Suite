@@ -19,6 +19,7 @@ import scipy.signal as ss
 
 sys.path.append('../Utilities')
 import utilities as ut
+import vocoder as vo
 
 #______________________________________________________________________________
 #Start mainPhaser.py
@@ -37,6 +38,7 @@ sampleRate = 44100
 def phaser(signal, ratio = .5, trim = False):
 
     signal = [int(x) for x in signal]
+    avg = ut.signalAvg(signal)[0]
 
     if trim:
         signal = signal[:441000]    
@@ -50,37 +52,34 @@ def phaser(signal, ratio = .5, trim = False):
     signal2_np = np.array(signal2)    
     
     
-    #perform the hilbert transformation
-    signal2_modified_np = np.imag(ss.hilbert(signal2_np))
-    #convert to python list        
-    signal2_modified_list = np.ndarray.tolist(signal2_modified_np)
-    #cast to ints
-    signal2_modified_list = [int(x) for x in signal2_modified_list]
-                  
+    signal2_modified_np = np.imag(ss.hilbert(signal2_np))        
+    signal2_modified_list = np.ndarray.tolist(signal2_modified_np)                  
     outputSignal = [int(signal1[i] + signal2_modified_list[i]) for i in range(length)]
-     
+    outputSignal = np.array(outputSignal)
+    outputSignal = vo.vocoder(outputSignal,P=.5)
+    outputSignal = np.ndarray.tolist(outputSignal) 
+    outputSignal = [int(x) for x in outputSignal]
+
+   
     return outputSignal 
 
 
 
 def phaserDemo():
+ 
+    jfk       = ut.readWaveFile(dirIn+"jfk.wav")
+    jfkPhaser = phaser(jfk)
+    ut.writeWaveFile(dirOut + "JFK_Phaser.wav", jfkPhaser)
+ 
+    piano       = ut.readWaveFile(dirIn+"piano.wav")
+    pianoPhaser = phaser(piano)
+    ut.writeWaveFile(dirOut + "Piano_Phaser.wav", pianoPhaser)
+      
+    violin = ut.readWaveFile(dirIn+"Violin2.wav")
+    violinPhaser = phaser(violin)
+    ut.writeWaveFile(dirOut + "Violin_Phaser.wav", violinPhaser)
     
-     obama       = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
-     obamaPhaser = phaser(obama)
-     assert(len(obama)==len(obamaPhaser))
-     ut.writeWaveFile(dirOut + "Obama_Phaser.wav", obamaPhaser)
-
-     jfk       = ut.readWaveFile(dirIn+"jfk.wav")
-     jfkPhaser = phaser(jfk)
-     assert(len(jfk)==len(jfkPhaser))
-     ut.writeWaveFile(dirOut + "JFK_Phaser.wav", jfkPhaser)
-
-     piano       = ut.readWaveFile(dirIn+"piano.wav")
-     pianoPhaser = phaser(piano)
-     assert(len(piano)==len(pianoPhaser))
-     ut.writeWaveFile(dirOut + "Piano_Phaser.wav", pianoPhaser)
-    
-     print("Phaser Demo Complete.")
+    print("Phaser Demo Complete.")
 
 
 phaserDemo()
