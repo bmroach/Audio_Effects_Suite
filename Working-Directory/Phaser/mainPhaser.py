@@ -41,28 +41,24 @@ def phaser(signal, ratio = .5, trim = False):
     if trim:
         signal = signal[:441000]    
     length = len(signal)
-    print(len(signal))
     
+    #split signal
     signal1 = [int(ratio*x) for x in signal]
     signal2 = [(1-ratio)*x for x in signal]
-        
+    
+    #cast to np array    
     signal2_np = np.array(signal2)    
     
     
-    
-    signal2_modified_np = np.imag(ss.hilbert(signal2_np))        
-
+    #perform the hilbert transformation
+    signal2_modified_np = np.imag(ss.hilbert(signal2_np))
+    #convert to python list        
     signal2_modified_list = np.ndarray.tolist(signal2_modified_np)
-
-#    signal2_modified_list = [int(x.imag) for x in signal2_modified_list]
+    #cast to ints
     signal2_modified_list = [int(x) for x in signal2_modified_list]
-         
-         
-         
-         
-         
+                  
     outputSignal = [int(signal1[i] + signal2_modified_list[i]) for i in range(length)]
-    print(len(outputSignal)) 
+     
     return outputSignal 
 
 
@@ -71,14 +67,17 @@ def phaserDemo():
     
      obama       = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
      obamaPhaser = phaser(obama)
+     assert(len(obama)==len(obamaPhaser))
      ut.writeWaveFile(dirOut + "Obama_Phaser.wav", obamaPhaser)
 
      jfk       = ut.readWaveFile(dirIn+"jfk.wav")
      jfkPhaser = phaser(jfk)
+     assert(len(jfk)==len(jfkPhaser))
      ut.writeWaveFile(dirOut + "JFK_Phaser.wav", jfkPhaser)
 
      piano       = ut.readWaveFile(dirIn+"piano.wav")
      pianoPhaser = phaser(piano)
+     assert(len(piano)==len(pianoPhaser))
      ut.writeWaveFile(dirOut + "Piano_Phaser.wav", pianoPhaser)
     
      print("Phaser Demo Complete.")
