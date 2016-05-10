@@ -18,6 +18,7 @@ import sys
 
 sys.path.append('../Utilities')
 import utilities as ut
+import vocoder as vo
 
 #______________________________________________________________________________
 #Start mainFlanger.py
@@ -34,16 +35,26 @@ mulFactor = sampleRate * 10
 
 #______________________________________________________________________________
         
-def flanger(delay):
+def flanger(signal, delay=20):
+    """delay in milliseconds"""
     
+    delaySamples = int(44.1*delay)
+    length = len(signal)
+    signal1 = [x*.5 for x in signal]
+    signal2 = copy.deepcopy(signal1)
     
+    outputSignal = []
     
-
-
-
-    
-    
-    
+    for i in range(length):
+        if i < length-delaySamples:
+            outputSignal += [ (signal1[i]+ signal2[i+delaySamples]) ]
+        else:
+            outputSignal += [ (signal1[i] * 2) ]
+        
+    outputSignal = np.array(outputSignal)
+    outputSignal = vo.vocoder(outputSignal,P=.5)
+    outputSignal = np.ndarray.tolist(outputSignal)         
+    outputSignal = [int(x) for x in outputSignal]
     
     return outputSignal
 
@@ -52,7 +63,7 @@ def flanger(delay):
 
 def flangerDemo():
     
-    jfk = ut.ut.readWaveFile(dirIn+"jfk.wav")
+    jfk = ut.readWaveFile(dirIn+"jfk.wav")
     jfkFlanger = flanger(jfk)
     ut.writeWaveFile(dirOut + "JFK_Flanger.wav", jfkFlanger)
     
