@@ -71,7 +71,7 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
         kernel3 += [clap[i] * location[i]]
     
     print("got kernel")
-    
+    '''
     new = []
     for i in signal:
         new += [int(signal[i] * kernel1[i])]
@@ -86,9 +86,9 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
         new3 += [int(signal[i] * kernel3[i])]
 
     #return new? is new needed?
-        
+
     print("got new")
-    
+    '''
     #according to https://en.wikipedia.org/wiki/Overlap%E2%80%93add_method#The_algorithm
     #this is the way Overlap-add should work,which is an efficient way of convolving
     
