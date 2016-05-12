@@ -54,6 +54,7 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
     
     print("signal acquired")
         
+    location = location[6610:]
     
     pdSamples = preDelay * sampleRate
     dSamples = Decay * sampleRate
@@ -63,12 +64,16 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
         print("trimmed")
     
     clap = ut.readWaveFile(dirIn+"Reverb_Samples/Clap.wav")
+    clap = clap[6610:]
     
     kernel1 = np.fft.fft(location) #use FFT on location sound
     kernel2 = convolve(clap,location)
     kernel3 = []
     for i in range(0, len(clap)-1):
         kernel3 += [clap[i] * location[i]]
+    kernel4 = []
+    for i in range(0, len(clap)-1):
+        kernel4 += [location[i]-clap[i]]
     
     print("got kernel")
     '''
@@ -96,13 +101,15 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
     M = int(L*1.5)
     N = 32768
     Nx = int(len(signal));
-    H = FFT(kernel1,N)     #is this right? should it be kernel or new?
+    H = FFT(kernel4,N)     #is this right?
+    #H = kernel4
     i = 1
 
     y = [0 for x in range(1, M+Nx-1)]
 
     while i <= Nx:
         il = min((i+L)-1,Nx)
+        #p = len(FFT(signal[i:il], N))
         yt = IFFT(FFT(signal[i:il], N) * H, N)
         k  = min(i+N-1,M+Nx-1)
         y[i:k] = y[i:k] + yt[1:(k-i+1)]   # (add the overlapped output blocks)
@@ -139,7 +146,7 @@ def convReverbDemo():
 
     piano       = ut.readWaveFile(dirIn+"piano.wav")
     Cas = ut.readWaveFile(dirIn+"Reverb_Samples/Cas.wav")
-    print("file read, now running convReverb")
+    print("files read, now running convReverb")
     pianoConvReverb = convReverb(piano, Cas)
     ut.writeWaveFile(dirOut + "Piano_Conv_Reverb.wav", pianoConvReverb)
     
