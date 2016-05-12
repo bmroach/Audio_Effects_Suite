@@ -7,16 +7,17 @@ Developed under the Apache License 2.0
 """
 #______________________________________________________________________________
 #Header Imports
-import sys
-sys.path.append('../Utilities')
-import utilities as ut
+
 
 import array
 import contextlib
 import wave
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
+sys.path.append('../Utilities')
+import utilities as ut
 
 #______________________________________________________________________________
 #Start mainConvReverb.py
@@ -32,6 +33,13 @@ mulFactor = sampleRate * 10
 maxAmp = (2**(8*sampleWidth - 1) - 1)    #maximum amplitude is 2**15 - 1  = 32767
 minAmp = -(2**(8*sampleWidth - 1))       #min amp is -2**15
 
+
+def FFT(X):
+    return np.fft.rfft(X)
+    
+def IFFT(X):
+    return np.fft.ifft(X)
+
 #______________________________________________________________________________
 
 def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
@@ -41,7 +49,7 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
     """    
     signal = [int(x) for x in signal]
     
-    print("signal aquired")
+    print("signal acquired")
         
     
     pdSamples = preDelay * sampleRate
@@ -58,17 +66,22 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
     
     clap = ut.readWaveFile(dirIn+"Reverb_Samples/Clap.wav")
     conv = []
+    
+    #this is creating the convolution kernel?
     for i in range(0, len(clap)-1):
-        conv.append(clap[i] * location[i])
+        conv += [clap[i] * location[i]]
+    
+    
+    
+    new = []
+    for i in signal:
+        new += [int(signal[i] * kernel[i])]
+    
         
     new2 = []
     for i in signal:
-        new2.append(int(signal[i] * conv[i]))
+        new2 += [int(signal[i] * conv[i])]
 
-    new = []
-
-    for i in signal:
-        new.append(int(signal[i] * kernel[i]))
         
     print("got new")
     
@@ -78,14 +91,14 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
     N = 32768
     Nx = len(signal);
     i = 1
-    y = []
-    for i in range(1, M+Nx-1):
-        y.append(0)
+
+    y = [0 for x in range(1, M+Nx-1)]
+
     while i <= Nx:
         il = min(i+L-1,Nx)
         yt = IFFT( FFT(signal[i:il]) * kernel)
         k  = min(i+N-1,M+Nx-1)
-        y[i:k] = y[i:k] + yt[1:k-i+1]   # (add the overlapped output blocks)
+        y[i:k] = y[i:k] + yt[1:(k-i+1)]   # (add the overlapped output blocks)
         i = i+L
     
     #convert back to ints
@@ -102,11 +115,7 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
     return y
 
 
-def FFT(X):
-    return np.fft.rfft(X)
-    
-def IFFT(X):
-    return np.fft.ifft(X)
+
 
 
 
