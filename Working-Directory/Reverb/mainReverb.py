@@ -29,9 +29,6 @@ dirOut = "../../Output-Audio-Samples/Reverb/"
 numChannels = 1                      # mono
 sampleWidth = 2                      # in bytes, a 16-bit short
 sampleRate = 44100
-
-
-
         
 #______________________________________________________________________________
         
@@ -46,49 +43,45 @@ def reverb(signal, preDelay = 0, Decay = .25, trim = True):
     dSamples = int(Decay * sampleRate)
     
     if trim: #trim to 10 seconds  
-        signal = signal[:441000]
-        
-    preLength = len(signal)
-        
-    #pad for reverb extension 
-    signal += [0 for x in range(pdSamples + dSamples)]
+        signal = signal[:441000]        
+     
     
-    
-    length = len(signal)
-    avg = ut.signalAvg(signal)[0]
-    
+    lengthIn = len(signal)
     logArray = [(math.e**(-1*(x/dSamples))) for x in range(dSamples)]
+    avg = ut.signalAvg(signal)[0]
+    goalAmp = avg * 1.2
+    outputSignal = [0 for x in range(len(signal) + pdSamples + dSamples)]
+    length = len(outputSignal)
     
-    for i in range(preLength):
-        currentSample = signal[i]
-        for x in range(dSamples): 
-            index = i + x + pdSamples #account for predelay
-            
-            signal[index] = signal[index] + (currentSample * logArray[x])
-             
-    goalAmp = avg * 1.2        
-    while ut.signalAvg(signal)[0] > goalAmp:
-        signal = [x*.90 for x in signal]
+    for i in range(lengthIn): #for all input samples
+        currentSample = signal[i]        
+        outputSignal[i] = currentSample
+        
+        for x in range(1,dSamples): #for all reverb samples
+            index = i + x + pdSamples            
+            outputSignal[index] += (currentSample * logArray[x])
+                
+    
+    while ut.signalAvg(outputSignal)[0] > goalAmp:
+        outputSignal = [int(x*.90) for x in outputSignal]
+    
      
-    signal = [int(x) for x in signal]
-     
-    return signal 
-
+    return outputSignal 
 
 
 
 def reverbDemo():
     
         
-#     obama       = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
+#     obama = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
 #     obamaReverb = reverb(obama)
 #     ut.writeWaveFile(dirOut + "Obama_Distortion.wav", obamaDist)
     
-#     jfk        = ut.readWaveFile(dirIn + "jfk.wav")
-#     jfkReverb  = reverb(jfk)
+#     jfk = ut.readWaveFile(dirIn + "jfk.wav")
+#     jfkReverb = reverb(jfk)
 #     ut.writeWaveFile(dirOut + "JFK_Distortion.wav", jfkDist)
 
-    piano       = ut.readWaveFile(dirIn+"piano.wav")
+    piano = ut.readWaveFile(dirIn+"piano.wav")
     pianoReverb = reverb(piano)
     ut.writeWaveFile(dirOut + "Piano_Reverb.wav", pianoReverb)
     
@@ -96,8 +89,3 @@ def reverbDemo():
 
 
 reverbDemo()
-
-         
-        
-   
-
