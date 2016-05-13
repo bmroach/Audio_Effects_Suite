@@ -36,7 +36,7 @@ maxAmp = (2**(8*sampleWidth - 1) - 1)    #maximum amplitude is 2**15 - 1  = 3276
 minAmp = -(2**(8*sampleWidth - 1))       #min amp is -2**15
 
 
-def kernelGenerator(signal, threshold=.1):
+def kernelGenerator(signal, threshold=.01):
     mx = max(signal)
     
     i = 0
@@ -97,29 +97,38 @@ def convReverb(signal, model, trim = True):
     return outputSignal
     
 
-def convReverbDemo():
-    
-    #____________________
-#     jfk        = ut.readWaveFile(dirIn + "jfk.wav")
+def convReverbDemo(case=1):
 
+    if case == 1:    
+        CAS          = ut.readWaveFile(dirIn+"Reverb_Samples/Cas.wav")
+        CASmodel     = kernelGenerator(CAS)
+        print(CASmodel)
+        
+        guitar = ut.readWaveFile(dirIn + "Guitar1.wav")
+        guitarConvReverb = convReverb(guitar, CASmodel, trim=False)
+        ut.writeWaveFile(dirOut + "Guitar_Conv_Reverb.wav", guitarConvReverb)
+         
+        piano        = ut.readWaveFile(dirIn+"piano.wav")
+        pianoConvReverb = convReverb(piano, CASmodel, trim=False)
+        ut.writeWaveFile(dirOut + "Piano_Conv_Reverb.wav", pianoConvReverb)
     
-    #____________________
     
     
-    ####
-    
-    
-    #____________________
-    piano        = ut.readWaveFile(dirIn+"piano.wav")
-    CAS          = ut.readWaveFile(dirIn+"Reverb_Samples/Cas.wav")
-    CASmodel     = kernelGenerator(CAS)    
-    
-    pianoConvReverb = convReverb(piano, CASmodel, trim=False)
-    
-    ut.writeWaveFile(dirOut + "Piano_Conv_Reverb.wav", pianoConvReverb)
-    #____________________
-    
+    elif case == 2:
+        warren = ut.readWaveFile(dirIn + "Reverb_Samples/Warren.wav")
+        warrenModel = kernelGenerator(warren)
+        print(warrenModel)
+        
+        guitar = ut.readWaveFile(dirIn + "Guitar1.wav")
+        guitarConvReverb = convReverb(guitar, warrenModel, trim=False)
+        ut.writeWaveFile(dirOut + "Guitar_Conv_Reverb.wav", guitarConvReverb)
+         
+        piano        = ut.readWaveFile(dirIn+"piano.wav")
+        pianoConvReverb = convReverb(piano, warrenModel, trim=False)
+        ut.writeWaveFile(dirOut + "Piano_Conv_Reverb.wav", pianoConvReverb)
+     
+     
     print("Convolution Reverb Demo Complete.")
 
 
-convReverbDemo()
+convReverbDemo(case=2)
