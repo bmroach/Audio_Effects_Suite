@@ -63,8 +63,9 @@ def reverb(signal, preDelay = 0, Decay = .25, trim = True):
                 
     
     while ut.signalAvg(outputSignal)[0] > goalAmp:
-        outputSignal = [int(x*.90) for x in outputSignal]
+        outputSignal = [x*.90 for x in outputSignal]
     
+    outputSignal = [int(x) for x in outputSignal]
      
     return outputSignal 
 

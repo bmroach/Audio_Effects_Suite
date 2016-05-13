@@ -12,12 +12,14 @@ Developed under the Apache License 2.0
 import array
 import contextlib
 import wave
+import copy
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
 sys.path.append('../Utilities')
 import utilities as ut
+import vocoder as vo
 
 #______________________________________________________________________________
 #Start mainConvReverb.py
@@ -34,114 +36,88 @@ maxAmp = (2**(8*sampleWidth - 1) - 1)    #maximum amplitude is 2**15 - 1  = 3276
 minAmp = -(2**(8*sampleWidth - 1))       #min amp is -2**15
 
 
-def FFT(X, N):
-    return np.fft.rfft(X, N)
+def kernelGenerator(signal, threshold=.1):
+    mx = max(signal)
     
-def IFFT(X, N):
-    return np.fft.ifft(X, N)
+    i = 0
+    while signal[i] != mx:
+        i += 1
     
-def convolve(X, Y):
-    return np.convolve(X, Y)
+    H = i
+    signal = signal[H:]
+    
+    i = 0
+    lowerThreshold = mx * threshold
+    while signal[i] > lowerThreshold:   
+        i += 1
+    E = i
+    signal = signal[:E]
+    
+    K = 1/mx    
+    model = [K*sample for sample in signal]
+    
+    for x in range(len(model)):
+        assert( model[x] <= 1 )  
+
+    return model
+
 
 #______________________________________________________________________________
 
-def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
-    """fileName: name of file in string form
-        preDelay: delay befor reverb begins (seconds)
-        Decay: hang time of signal (seconds)        
-    """    
+
+def convReverb(signal, model, trim = True):
+    """fileName: name of file in string form """    
+    
     signal = [int(x) for x in signal]
+    avg = ut.signalAvg(signal)[0]
     
-    print("signal acquired")
-        
+    if trim: #trim to 10 seconds  
+        signal = signal[:441000] 
     
-    pdSamples = preDelay * sampleRate
-    dSamples = Decay * sampleRate
+    outputSignal = copy.deepcopy(signal)     
+    outputSignal += [0 for x in range(len(model))]
     
-    if trim: #trim to 10 seconds
-        signal = signal[:441000]
-        print("trimmed")
+    for i in range(len(signal)):
+        currentSample = signal[i]
+        for x in range(1, len(model)):
+            index = i + x
+            outputSignal[index] += currentSample * model[x]
     
-    clap = ut.readWaveFile(dirIn+"Reverb_Samples/Clap.wav")
+    while ut.signalAvg(outputSignal)[0] > avg:
+        outputSignal = [x*.9 for x in outputSignal]
+               
     
-    kernel1 = np.fft.fft(location) #use FFT on location sound
-    kernel2 = convolve(clap,location)
-    kernel3 = []
-    for i in range(0, len(clap)-1):
-        kernel3 += [clap[i] * location[i]]
+    outputSignal = np.array(outputSignal)
+    outputSignal = vo.vocoder(outputSignal,P=.5)
+    outputSignal = np.ndarray.tolist(outputSignal) 
+    outputSignal = [int(x) for x in outputSignal]
     
-    print("got kernel")
     
-    new = []
-    for i in signal:
-        new += [int(signal[i] * kernel1[i])]
-    
-        
-    new2 = []
-    for i in signal:
-        new2 += [int(signal[i] * kernel2[i])]
-        
-    new3 = []
-    for i in signal:
-        new3 += [int(signal[i] * kernel3[i])]
 
-    #return new? is new needed?
-        
-    print("got new")
+    return outputSignal
     
-    #according to https://en.wikipedia.org/wiki/Overlap%E2%80%93add_method#The_algorithm
-    #this is the way Overlap-add should work,which is an efficient way of convolving
-    
-    L = 44100//2
-    M = int(L*1.5)
-    N = 32768
-    Nx = int(len(signal));
-    H = FFT(kernel1,N)     #is this right? should it be kernel or new?
-    i = 1
-
-    y = [0 for x in range(1, M+Nx-1)]
-
-    while i <= Nx:
-        il = min((i+L)-1,Nx)
-        yt = IFFT(FFT(signal[i:il], N) * H, N)
-        k  = min(i+N-1,M+Nx-1)
-        y[i:k] = y[i:k] + yt[1:(k-i+1)]   # (add the overlapped output blocks)
-        i = i+L
-    
-    #convert back to ints
-    y = [int(x) for x in y]
-    
-    #ensure values are within short int range
-    for i in range(len(y)):
-        if y[i] > maxAmp:
-            y[i] = maxAmp-1
-        
-        elif y[i] < minAmp:
-            y[i] = minAmp+1    
-    
-    return y
-
-
-
-
-
 
 def convReverbDemo():
     
-        
-#     obama       = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
-#     obamaReverb = reverb(obama)
-#     ut.writeWaveFile(dirOut + "Obama_Distortion.wav", obamaDist)
-    
+    #____________________
 #     jfk        = ut.readWaveFile(dirIn + "jfk.wav")
-#     jfkReverb  = reverb(jfk)
-#     ut.writeWaveFile(dirOut + "JFK_Distortion.wav", jfkDist)
 
-    piano       = ut.readWaveFile(dirIn+"piano.wav")
-    Cas = ut.readWaveFile(dirIn+"Reverb_Samples/Cas.wav")
-    print("file read, now running convReverb")
-    pianoConvReverb = convReverb(piano, Cas)
+    
+    #____________________
+    
+    
+    ####
+    
+    
+    #____________________
+    piano        = ut.readWaveFile(dirIn+"piano.wav")
+    CAS          = ut.readWaveFile(dirIn+"Reverb_Samples/Cas.wav")
+    CASmodel     = kernelGenerator(CAS)    
+    
+    pianoConvReverb = convReverb(piano, CASmodel, trim=False)
+    
     ut.writeWaveFile(dirOut + "Piano_Conv_Reverb.wav", pianoConvReverb)
+    #____________________
     
     print("Convolution Reverb Demo Complete.")
 
