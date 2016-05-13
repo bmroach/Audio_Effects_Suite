@@ -13,7 +13,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import copy
+from scipy.interpolate import interp1d
 
+import vocoder as vo
 
 
 # Global parameters
@@ -58,8 +60,7 @@ def signalAvg(signal):
     posAvg = 0
     posCount = 0 
     negAvg = 0
-    negCount = 0 
-        
+    negCount = 0         
     for i in range(len(signal)):
         if signal[i] >= 0:
             posAvg += signal[i]
@@ -68,13 +69,10 @@ def signalAvg(signal):
         else:
             negAvg += signal[i]
             negCount += 1
-
     if posCount > 0:
-        posAvg /= posCount
-    
+        posAvg /= posCount    
     if negCount > 0:    
-        negAvg /= negCount        
-                         
+        negAvg /= negCount                                 
     return [posAvg, negAvg]
 
 
@@ -84,6 +82,37 @@ def signalCapPercent(signal):
         if signal[i] >= maxAmp or signal[i] <= minAmp:
             val += 1     
     return val/len(signal)
+
+
+def timeStretch(X,P):
+
+    idx = list(range(len(X)))
+    f = interp1d(idx, X, kind='cubic')
+
+    x = np.arange(0,len(idx), 1/P)
+    y = []
+    
+    for i in range(len(x)):
+        if x[i] < len(idx)-1:
+            y.append(f(x[i]))
+    
+    return y 
+
+
+def pitchStretch(X,P):
+
+    invP = 1/P
+    length = len(X)
+    dataOut = []    
+    
+    for i in range(0,length, 100):
+        if i + 100 < length:
+            dataOut.extend(timeStretch(X[i:i+100], P))      
+    
+    
+    finalDataOut = vo.vocoder(dataOut,P = invP)
+    return finalDataOut
+
 
 
         
