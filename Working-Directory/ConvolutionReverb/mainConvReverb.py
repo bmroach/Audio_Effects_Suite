@@ -116,6 +116,7 @@ def convReverb(signal, location, preDelay = 0, Decay = 1, trim = True):
         i = i+L
     
     #convert back to ints
+    y = np.convolve(signal, location)
     y = [int(x) for x in y]
     
     #ensure values are within short int range
