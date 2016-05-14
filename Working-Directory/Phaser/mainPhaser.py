@@ -50,8 +50,7 @@ def phaser(signal, ratio = .5, trim = False):
     
     #cast to np array    
     signal2_np = np.array(signal2)    
-    
-    
+        
     signal2_modified_np = np.imag(ss.hilbert(signal2_np))        
     signal2_modified_list = np.ndarray.tolist(signal2_modified_np)                  
     outputSignal = [int(signal1[i] + signal2_modified_list[i]) for i in range(length)]

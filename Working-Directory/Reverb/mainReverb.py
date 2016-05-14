@@ -73,11 +73,6 @@ def reverb(signal, preDelay = 0, Decay = .25, trim = True):
 
 def reverbDemo():
     
-        
-#     obama = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
-#     obamaReverb = reverb(obama)
-#     ut.writeWaveFile(dirOut + "Obama_Distortion.wav", obamaDist)
-    
 #     jfk = ut.readWaveFile(dirIn + "jfk.wav")
 #     jfkReverb = reverb(jfk)
 #     ut.writeWaveFile(dirOut + "JFK_Distortion.wav", jfkDist)

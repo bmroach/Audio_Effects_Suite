@@ -201,17 +201,14 @@ def distortion(signal, clipThreshold = .3, attack = .9, trim=True):
        
 def distortionDemo():
     
-#     obama     = ut.readWaveFile(dirIn+"ObamaAcceptanceSpeech.wav")
-#     obamaDist = distortion(obama)    
-#     ut.writeWaveFile(dirOut + "Obama_Distortion.wav", obamaDist)
     
     jfk     = ut.readWaveFile(dirIn + "jfk.wav")
     jfkDist = distortion(jfk)
     ut.writeWaveFile(dirOut + "JFK_Distortion.wav", jfkDist)
 
-#     piano     = ut.readWaveFile(dirIn+"piano.wav")
-#     pianoDist = distortion(piano)    
-#     ut.writeWaveFile(dirOut + "Piano_Distortion.wav", pianoDist)
+    piano     = ut.readWaveFile(dirIn+"piano.wav")
+    pianoDist = distortion(piano)    
+    ut.writeWaveFile(dirOut + "Piano_Distortion.wav", pianoDist)
     
     print("Distortion Demo Complete.")
 
